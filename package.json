@@ -1,0 +1,23 @@
+{
+  "name": "elaborate-modules",
+  "version": "0.0.1",
+  "author": {
+    "name": "Gijsjan Brouwer",
+    "email": "a.g.brouwer@huygens.knaw.nl"
+  },
+  "main": "annotated-text/annotated-text.coffee",
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "browserify": {
+    "transform": [
+      "jadeify",
+      "coffeeify"
+    ]
+  },
+  "devDependencies": {
+    "backbone": "~1.0.0",
+    "jquery": "~2.1.0"
+  }
+}

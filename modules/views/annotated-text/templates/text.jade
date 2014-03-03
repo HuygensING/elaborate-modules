@@ -1,0 +1,5 @@
+header
+	select
+		for textlayer in textlayers.models
+			option(value=textlayer.id, selected=textlayer.id==textlayers.current.id)= textlayer.id
+	i.btn-print.fa.fa-print
