@@ -5,7 +5,7 @@
 	input(type="checkbox", data-id=entryData.id, id=randomID)
 	label(for=randomID)= entryData.name
 .default-mode
-	label= entryData.name
+	label.main= entryData.name
 
 .metadata
 	ul
@@ -19,6 +19,9 @@ if fulltext
 	.keywords
 		ul
 			if entryData._kwic != null
-				each kwic, container in entryData._kwic
-					each row in kwic
-						li!= '<span class="textlayer">'+container + '</span> '+ row						
+				each kwic, textLayer in entryData._kwic
+					li(data-textlayer=textLayer)
+						label= textLayer
+						ul.kwic
+							each row in kwic
+								li!= row						

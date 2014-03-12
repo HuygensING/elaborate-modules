@@ -1,0 +1,56 @@
+@media print
+	html, body
+		overflow visible !important
+
+	#main
+		.entries
+			.entry
+				& > header
+					display none
+
+				article
+					.panels-menu, .metadata
+						display none
+
+					.panels
+						height auto !important
+
+						.facsimile
+							display none !important
+
+						.elaborate-annotated-text
+							width 100%
+							display block
+							margin-bottom 100px
+
+							.text, .annotations
+								width 100%
+								display block
+
+							.text
+								h3
+									font-size 1.2em
+									color black
+
+							.annotations
+								ol
+									li
+										&:before
+											background none
+
+										div.type
+											display block
+
+											span
+												background none
+												padding 0
+												margin 0
+
+										span
+											white-space normal
+
+							
+								
+
+					i, select
+						display none

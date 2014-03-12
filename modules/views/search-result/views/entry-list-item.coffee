@@ -22,6 +22,7 @@ class EntryListItem extends Base
 		super
 
 		@options.fulltext ?= false
+		if @options.fulltext then @$el.addClass 'fulltext' else @$el.addClass 'no-fulltext'
 
 		@render()
 
@@ -43,9 +44,12 @@ class EntryListItem extends Base
 	# ### Events
 	events: ->
 		'click': (ev) ->
-			if @$('.default-mode').is(":visible")
-				@trigger 'click', @options.entryData.id, @options.entryData.terms
-			else if @$('.edit-mode').is(":visible")
-				@$('input')[0].checked = !@$('input')[0].checked
+			unless @$el.hasClass 'fulltext'
+				if @$('.default-mode').is(":visible")
+					@trigger 'click', @options.entryData.id, @options.entryData.terms
+				else if @$('.edit-mode').is(":visible")
+					@$('input')[0].checked = !@$('input')[0].checked
+		'click .keywords > ul > li': (ev) ->
+			@trigger 'click', @options.entryData.id, @options.entryData.terms, ev.currentTarget.getAttribute 'data-textlayer'
 
 module.exports = EntryListItem

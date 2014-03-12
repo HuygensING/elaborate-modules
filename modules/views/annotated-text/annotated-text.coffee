@@ -1,4 +1,6 @@
 Backbone = require 'backbone'
+_ = require 'underscore'
+$ = require 'jquery'
 
 Views =
 	Text: require './views/text'
@@ -27,46 +29,86 @@ class AnnotatedText extends Backbone.View
 
 	className: 'elaborate-annotated-text'
 
-	initialize: -> @render()
+	initialize: -> 
+		@options.autoListening ?= true
+		@options.scrollEl ?= $('html body')
+		
+		@render()
 
 	render: ->
-		@options.autoListening ?= true
+		eventBus = _.extend {}, Backbone.Events
 
-		# Get the data for the current text layer. The data is an object with
-		# a text and an annotationData property.
-		# layerData = @options.paralleltexts[@options.textlayers.current.id]
-
-		# console.log layerData, @options.paralleltexts, @options.textlayers
-
+		@textView.remove() if @textView?
 		@textView = new Views.Text
 			paralleltexts: @options.paralleltexts
-			textlayers: @options.textlayers
+			# textlayers: @options.textlayers
+			textLayer: @options.textLayer
+			eventBus: eventBus
+			scrollEl: @options.scrollEl
 		@$el.html @textView.$el
 		
+		$sups = @$('.text sup')
+
+		@annotationsView.remove() if @annotationsView?
 		@annotationsView = new Views.Annotations
 			paralleltexts: @options.paralleltexts
 			annotationTypes: @options.annotationTypes
-			textlayers: @options.textlayers
-			$sups: @$('.text sup')
+			textLayer: @options.textLayer
+			$sups: $sups
+			eventBus: eventBus
+			scrollEl: @options.scrollEl
 		@$el.append @annotationsView.$el
+
+		@toggleAnnotations $sups.length > 0
+
+		@textView.$('i.toggle-annotations').hide() if $sups.length is 0
 
 		@startListening() if @options.autoListening
 
-		setTimeout (=>
-			@textView.highlightAnnotation @options.annotation if @options.annotation?
-			@textView.markTerm @options.term if @options.term?
-		), 1000
+		# setTimeout (=>
+		# 	@textView.highlightAnnotation @options.annotation if @options.annotation?
+		# 	@textView.markTerm @options.term if @options.term?
+		# ), 1000
 
 	# ### Methods
 
+	destroy: ->
+		@textView.destroy()
+		@annotationsView.destroy()
+
+		@remove()
+
+	toggleAnnotations: (showing) ->
+		@$el.toggleClass 'with-annotations', showing
+		@$el.toggleClass 'without-annotations', !showing
+
 	startListening: ->
+		# @listenTo @options.textlayers, 'change:current', (textlayer) => 
+		# 	@stopListening()
+		# 	@render()
+		# 	@startListening()
+
+		@listenTo @textView, 'toggle-annotations', @toggleAnnotations
+			
+
+		@listenTo @textView, 'change:textlayer', (textLayer) ->
+			@options.textLayer = textLayer
+			@stopListening()
+			@render()
+			@startListening()
+
 		@textView.startListening()
-		@annotationsView.startListening()
+		@annotationsView.startListening() if @annotationsView?
 
 	stopListening: ->
 		@textView.stopListening()
-		@annotationsView.stopListening()
+		@annotationsView.stopListening() if @annotationsView?
+
+		super
 
 	highlightOff: -> @textView.highlightOff()
+
+	highlightAnnotation: (annotationId) -> @textView.highlightAnnotation annotationId
+	highlightTerms: (terms) -> @textView.highlightTerms terms
 
 module.exports = AnnotatedText

@@ -25,6 +25,14 @@ highlightColor = lighten(annotationsBackground, 40%)
 			select
 				margin-left 10px
 
+			h3
+				margin 0 4px 0 28px
+				padding 0
+				display inline-block
+
+			i.fa
+				margin-right 4px
+
 		.line
 			// font-family "Junicode", serif;
 			line-height 28px
@@ -54,7 +62,11 @@ highlightColor = lighten(annotationsBackground, 40%)
 				color white
 
 			.highlight-term
-				background-color yellow
+				// background-color yellow
+				background lighten(#FF0, 40%)
+				padding 1px 5px 2px 5px
+				border-radius 4px
+				box-shadow 1px 1px 2px #CCC
 
 			sup
 				line-height 0

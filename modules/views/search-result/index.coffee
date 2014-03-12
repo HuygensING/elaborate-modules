@@ -13,6 +13,8 @@ tpl = require './templates/main.jade'
 
 class SearchResult extends Views.Base
 
+	className: 'results-placeholder'
+
 	initialize: -> 
 		super
 
@@ -33,7 +35,7 @@ class SearchResult extends Views.Base
 			entryListItem = new Views.EntryListItem
 				entryData: result
 				fulltext: fulltext
-			@listenTo entryListItem, 'click', (id, terms) -> @trigger 'navigate:entry', id, terms
+			@listenTo entryListItem, 'click', (id, terms, textLayer) -> @trigger 'navigate:entry', id, terms, textLayer
 			frag.appendChild entryListItem.el
 
 		# Add the frag to the dom

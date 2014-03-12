@@ -17,6 +17,8 @@ Views =
 
 tpl = require './templates/main.jade'
 
+editMultipleMetadataActive = false
+
 class FacetedSearchResults extends Views.Base
 
 	className: 'faceted-search-results'
@@ -59,10 +61,15 @@ class FacetedSearchResults extends Views.Base
 		@listenTo @subviews.facetedSearch, 'unauthorized', => Backbone.history.navigate 'login', trigger: true
 
 		@listenTo @subviews.facetedSearch, 'results:change', (responseModel) =>
-			@trigger 'change:results', responseModel
-			# @project.resultSet = responseModel
-			# @renderHeader responseModel
 			@renderResult responseModel
+
+			# We check the flag to see if the editMultipleMetadata form was active when the results changed.
+			if editMultipleMetadataActive
+				console.log "TODO"
+				# TODO Restore editMultipleMetadata form. Not easy because it is rerendered by result:change,
+				# but we need it's state (filled in inputs, selected checkboxes, etc)
+
+			@trigger 'change:results', responseModel
 
 	# renderHeader: (responseModel) ->
 	# 	@el.querySelector('h3.numfound').innerHTML = responseModel.get('numFound') + " #{config.get('entryTermPlural')} found"
@@ -99,7 +106,7 @@ class FacetedSearchResults extends Views.Base
 
 		@listenTo @subviews.searchResult, 'change:sort-levels', (sortParameters) => @subviews.facetedSearch.refresh sortParameters: sortParameters
 		@listenTo @subviews.searchResult, 'change:pagination', (pagenumber) => @subviews.facetedSearch.page pagenumber
-		@listenTo @subviews.searchResult, 'navigate:entry', (id, terms) => @trigger 'navigate:entry', id, terms
+		@listenTo @subviews.searchResult, 'navigate:entry', (id, terms, textLayer) => @trigger 'navigate:entry', id, terms, textLayer
 
 	# ### Events
 	events:
@@ -143,8 +150,10 @@ class FacetedSearchResults extends Views.Base
 
 		@$('.resultview').toggleClass 'edit-multiple-entry-metadata'
 
+		editMultipleMetadataActive = @$('.resultview').hasClass 'edit-multiple-entry-metadata'
+
 		# Class has been added, so we add the form
-		if @$('.resultview').hasClass 'edit-multiple-entry-metadata'				
+		if editMultipleMetadataActive		
 			# Create the form.
 			@subviews.editMultipleEntryMetadata = new Views.EditMultipleMetadata
 				entryMetadataFields: @options.entryMetadataFields

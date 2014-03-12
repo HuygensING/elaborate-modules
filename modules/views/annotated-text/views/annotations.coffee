@@ -4,8 +4,6 @@ _ = require 'underscore'
 
 dom = require 'hilib/src/utils/dom'
 
-events = require '../events'
-
 Annotations = require '../collections/annotations'
 
 tpl = require '../templates/annotations.jade'
@@ -27,10 +25,7 @@ class AnnotationsView extends Backbone.View
 	# Render is called from the textView, because the annotationsView needs a list of the
 	# sups that are rendered in the textView.
 	render: ->
-		annotationData = @options.paralleltexts[@options.textlayers.current.id].annotationData
-
-		# annotations = layerData.annotationData
-		annotationTypes = @options.annotationTypes[@options.textlayers.current.id]
+		annotationData = @options.paralleltexts[@options.textLayer]?.annotationData
 
 		annotations = {}
 		annotations[annotation.n] = annotation for annotation in annotationData ? []
@@ -40,12 +35,12 @@ class AnnotationsView extends Backbone.View
 
 		@$el.html tpl
 			annotations: orderedAnnotations
-			annotationTypes: annotationTypes
+			annotationTypes: @options.annotationTypes[@options.textLayer] or []
 
 		@toggleAnnotations true if @expandAnnotations
 
-		enter = (ev) => events.trigger 'highlight-annotation', ev.currentTarget.getAttribute 'data-id'
-		leave = (ev) => events.trigger 'unhighlight-annotation', ev.currentTarget.getAttribute 'data-id'
+		enter = (ev) => @options.eventBus.trigger 'highlight-annotation', ev.currentTarget.getAttribute 'data-id'
+		leave = (ev) => @options.eventBus.trigger 'unhighlight-annotation', ev.currentTarget.getAttribute 'data-id'
 		@$('ol li').hover enter, leave
 
 		@
@@ -59,7 +54,7 @@ class AnnotationsView extends Backbone.View
 	# The 'send-toggle-annotation' event tells the textView it should send the toggle:annotation event.
 	# We do this, because we need the supTop (the top position of the <sup> with data-id=markerId in the textView)
 	# when aligning the sup[data-id] with li[data-id].
-	sendToggleAnnotation: (ev) -> events.trigger 'send:toggle:annotation', ev.currentTarget.getAttribute 'data-id'
+	sendToggleAnnotation: (ev) -> @options.eventBus.trigger 'send:toggle:annotation', ev.currentTarget.getAttribute 'data-id'
 
 	filterAnnotations: (ev) ->
 		type = ev.currentTarget[ev.currentTarget.selectedIndex].value
@@ -91,6 +86,8 @@ class AnnotationsView extends Backbone.View
 
 	# ### Methods
 
+	destroy: -> @remove()
+
 	resetAnnotations: ->
 		@$('ol li.show').removeClass 'show'
 
@@ -116,16 +113,14 @@ class AnnotationsView extends Backbone.View
 			unless dom($li[0]).inViewport()
 				liAbsoluteTop = $li.offset().top
 				# Firefox sets overflow to html (instead of body) so we call body ánd html.
-				$('body,html').animate scrollTop: liAbsoluteTop - 20
+				@options.scrollEl.animate scrollTop: liAbsoluteTop - 20
 
 	startListening: ->
-		@listenTo @options.textlayers, 'change:current', (textlayer) => @render()
-
-		@listenTo events, 'toggle:annotation', (markerId, supTop) =>
+		@listenTo @options.eventBus, 'toggle:annotation', (markerId, supTop) =>
 			@toggleAnnotation markerId
 			@slideAnnotations markerId, supTop
 
-		@listenTo events, 'activate:annotation', (markerId) => @$('li[data-id="'+markerId+'"]').addClass 'active'
-		@listenTo events, 'unactivate:annotation', (markerId) => @$('li[data-id="'+markerId+'"]').removeClass 'active'
+		@listenTo @options.eventBus, 'activate:annotation', (markerId) => @$('li[data-id="'+markerId+'"]').addClass 'active'
+		@listenTo @options.eventBus, 'unactivate:annotation', (markerId) => @$('li[data-id="'+markerId+'"]').removeClass 'active'
 
 module.exports = AnnotationsView
