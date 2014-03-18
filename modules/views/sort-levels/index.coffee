@@ -1,3 +1,4 @@
+Backbone = require 'backbone'
 $ = require 'jquery'
 
 Views =
@@ -19,6 +20,19 @@ class SortLevels extends Views.Base
 			levels: @options.levels
 			entryMetadataFields: @options.entryMetadataFields
 		@$el.html rtpl
+
+		@listenTo Backbone, 'sortlevels:update', (sortLevels) =>
+			@options.levels = sortLevels
+
+			sortParameters = []
+			sortParameters.push fieldname: level, direction: 'asc' for level in sortLevels
+			@trigger 'change', sortParameters
+			
+			@render()
+
+		@listenTo Backbone, 'entrymetadatafields:update', (fields) =>
+			@options.entryMetadataFields = fields
+			@render()
 
 		# TODO turn off on destroy
 		@$el.mouseleave (ev) => 

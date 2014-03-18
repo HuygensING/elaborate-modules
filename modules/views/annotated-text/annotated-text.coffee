@@ -32,6 +32,8 @@ class AnnotatedText extends Backbone.View
 	initialize: -> 
 		@options.autoListening ?= true
 		@options.scrollEl ?= $('html body')
+
+		# console.log @options
 		
 		@render()
 
@@ -45,6 +47,7 @@ class AnnotatedText extends Backbone.View
 			textLayer: @options.textLayer
 			eventBus: eventBus
 			scrollEl: @options.scrollEl
+			highlightAnnotations: @options.highlightAnnotations
 		@$el.html @textView.$el
 		
 		$sups = @$('.text sup')
@@ -110,5 +113,6 @@ class AnnotatedText extends Backbone.View
 
 	highlightAnnotation: (annotationId) -> @textView.highlightAnnotation annotationId
 	highlightTerms: (terms) -> @textView.highlightTerms terms
+	highlightTermsInAnnotations: (terms) -> @annotationsView.highlightTerms terms
 
 module.exports = AnnotatedText

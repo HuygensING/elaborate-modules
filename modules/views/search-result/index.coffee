@@ -1,4 +1,6 @@
 $ = require 'jquery'
+_ = require 'underscore'
+
 dom = require 'hilib/src/utils/dom'
 
 config = require '../../models/config'
@@ -11,6 +13,8 @@ Views =
 
 tpl = require './templates/main.jade'
 
+listItems = []
+
 class SearchResult extends Views.Base
 
 	className: 'results-placeholder'
@@ -20,44 +24,17 @@ class SearchResult extends Views.Base
 
 		@render()
 
+	# ### Render
 	render: ->
 		@$el.html tpl()
 
-		@renderHeader()
+		@renderLevels()
 
-		queryOptions = @options.responseModel.options?.queryOptions ? {}
-		fulltext = queryOptions.term? and queryOptions.term isnt ''
-
-		# Create a document fragment and append entry listitem views.
-		frag = document.createDocumentFragment()
-		for result in @options.responseModel.get 'results'
-			# TODO: destroy listitems on @destroy()
-			entryListItem = new Views.EntryListItem
-				entryData: result
-				fulltext: fulltext
-			@listenTo entryListItem, 'click', (id, terms, textLayer) -> @trigger 'navigate:entry', id, terms, textLayer
-			frag.appendChild entryListItem.el
-
-		# Add the frag to the dom
-		ulentries = @$('ul.entries')
-		ulentries.html frag
-	
-		# Wait for DOM to update	
-		# setTimeout (-> ulentries.height $(window).height() - ulentries.offset().top), 0
+		@renderListItems()
 
 		@
 
-	renderHeader: ->
-		@el.querySelector('h3.numfound').innerHTML = @options.responseModel.get('numFound') + " #{config.get('entryTermPlural')} found"
-
-		@renderLevels()
-		@renderPagination()
-
 	renderLevels: ->
-		if @subviews.sortLevels?
-			@stopListening @subviews.sortLevels
-			@subviews.sortLevels.destroy()
-
 		@subviews.sortLevels = new Views.SortLevels
 			levels: @options.levels
 			entryMetadataFields: @options.entryMetadataFields
@@ -74,9 +51,71 @@ class SearchResult extends Views.Base
 			start: @options.responseModel.get('start')
 			rowCount: @options.resultRows
 			resultCount: @options.responseModel.get('numFound')
-		@listenTo @subviews.pagination, 'change:pagenumber', (pagenumber) => @trigger 'change:pagination', pagenumber
+		@listenTo @subviews.pagination, 'change:pagenumber', @changePage
 		@$('header .pagination').html @subviews.pagination.el
 
+	changePage: (pageNumber) ->
+		entries = @$ 'div.entries'
+		entries.find('ul.page').hide()
+
+		if entries.find("ul.page[data-page-number=\"#{pageNumber}\"]").length > 0
+			entries.find("ul.page[data-page-number=\"#{pageNumber}\"]").show()			
+		else
+			@trigger 'change:pagination', pageNumber
+
+	renderListItemsPage: (responseModel) ->
+		pageNumber = @subviews.pagination.options.currentPage
+
+		queryOptions = @options.responseModel.options?.queryOptions ? {}
+		fulltext = queryOptions.term? and queryOptions.term isnt ''
+
+		# Create a document fragment and append entry listitem views.
+		frag = document.createDocumentFragment()
+		for result in @options.responseModel.get 'results'
+			# Instantiate a new list item.
+			entryListItem = new Views.EntryListItem
+				entryData: result
+				fulltext: fulltext
+
+			# Listen to the click event, which bubbles up all the way to the faceted search, so it can pass
+			# it to the parent view and trigger the router to navigate to the entry.
+			@listenTo entryListItem, 'click', (id, terms, textLayer) -> @trigger 'navigate:entry', id, terms, textLayer
+
+			# Push every list item into the listItems array, so we can remove them on re-render.
+			listItems.push entryListItem
+			
+			# Add the list item to the frag.
+			frag.appendChild entryListItem.el
+
+		# ul = document.createElement 'ul'
+		# ul.className = "page"
+		# ul.setAttribute 'data-page-number', pageNumber
+
+
+		# Add the frag to the dom.
+		ul = $("<ul class=\"page\" data-page-number=\"#{pageNumber}\" />")
+		ul.html frag
+		@$("div.entries").append ul
+
+
+	renderListItems: (responseModel) ->
+		# On the first render, the response model is present in the @options.
+		# On re-render, the response model is given as an argument.
+		@options.responseModel = responseModel if responseModel?
+		
+		# Set the number of found entries to the header.
+		@$('header h3.numfound').html "Found #{@options.responseModel.get('numFound')} #{config.get('entryTermPlural')}"
+
+		@renderPagination()
+
+		# Remove previously rendered list items.
+		listItem.remove() for listItem in listItems
+
+		@$("div.entries ul.page").remove()
+
+		@renderListItemsPage @options.responseModel
+
+	# ### Events
 	events: ->
 		'change li.show-metadata input': 'showMetadata'
 

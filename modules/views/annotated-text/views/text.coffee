@@ -32,7 +32,7 @@ class EntryTextView extends Backbone.View
 		@$el.html tpl 
 			textLayer: @options.textLayer
 			textlayers: textlayers
-		# @$el.fadeOut(75).append(text).fadeIn(75)
+
 		@$el.append(text)
 
 		enter = (ev) => 
@@ -87,7 +87,6 @@ class EntryTextView extends Backbone.View
 
 	destroy: -> @remove()
 
-
 	highlightAnnotation: (markerId, $scrollEl) ->
 		@highlightOn markerId
 
@@ -102,31 +101,16 @@ class EntryTextView extends Backbone.View
 		for term in terms
 			$divs = @$("div.line:contains(#{term})")
 
+			# We want to ignore html tags lying between the letters of the searched term.
+			term = term.split('').join('(</?\\w+>)*')
+
 			for div in $divs
 				$div = $(div)
 				regex = new RegExp(term, "gi")
 				html = $div.html().replace(regex, "<span class=\"highlight-term\">$&</span>")
 				$div.html html
 
-	# markTerm: (query) ->
-	# 	$divs = @$("div.line:contains('#{query}')")
-	# 	_.each $divs, (div) ->
-	# 		$div = $(div)
-	# 		regex = new RegExp(query, "gi")
-	# 		html = $div.html().replace(regex, "<span class=\"highlight-term\">$&</span>")
-	# 		$div.html html
-
-	# 	@scrollIntoView @$('span.highlight-term').first()
-
-	# scrollTo: (markerID) ->
-	# 	startNode = @annotationStartNode markerID
-	# 	scroll = => $('body').scrollTo startNode,
-	# 		axis: 'y'
-	# 		duration: 500
-	# 		offset:
-	# 			top: -50
-	# 			left: 0
-	# 	_.delay scroll, 1000 # wait for render to complete
+		@scrollIntoView @$('span.highlight-term').first()
 
 	scrollIntoView: ($el) ->
 		if $el.length > 0 and not dom($el[0]).inViewport()

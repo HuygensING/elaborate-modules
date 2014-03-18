@@ -1,9 +1,18 @@
 .resultview
 	position absolute
-	left 360px
+	left 370px
 	top 0
 	bottom 0
 	right 0
+
+	ul
+		list-style none
+		padding 0
+		margin 0
+
+	div.entries
+		absolute top 80px right 0 bottom 0 left 0
+		overflow-y auto
 
 	header
 		background white
@@ -102,15 +111,3 @@
 					label
 						color black
 						cursor default
-	ul
-		margin 0
-		padding 0
-
-		&.entries
-			absolute top 80px right 0 bottom 0 left 0
-			overflow-y auto
-			list-style square
-			padding-left 16px
-
-
-		// li is defined in ./entry-list-item.styl

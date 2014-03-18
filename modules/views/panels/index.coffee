@@ -16,7 +16,6 @@ Views =
 	FacsimilePanel: require './views/facsimile-panel'
 
 tpl = require './templates/main.jade'
-# metadataTpl = require './templates/metadata.jade'
 
 KEYCODE_ESCAPE = 27
 
@@ -79,19 +78,15 @@ class Panels extends Backbone.View
 				@$('.panels').animate scrollLeft: activePanelLeft, 400, =>
 					if @options.annotation?
 						activePanel.get('view').highlightAnnotation @options.annotation
-			else
+			else if @options.annotation?
 				activePanel.get('view').highlightAnnotation @options.annotation
 
 			if @options.terms?
-				activePanel.get('view').highlightTerms Object.keys @options.terms
-
-
-	# renderMetadata: ->
-	# 	metadata = @model.get('metadata') || []
-	# 	@$('.metadata').html metadataTpl
-	# 		metadata: metadata
-
-	# 	@
+				# console.log @options.highlightAnnotations, @options
+				if @options.highlightAnnotations
+					activePanel.get('view').highlightTermsInAnnotations Object.keys(@options.terms)
+				else
+					activePanel.get('view').highlightTerms Object.keys(@options.terms)
 
 	renderPanelsMenu: ->
 		@options.facsimiles = @model.get('facsimiles')
@@ -100,18 +95,11 @@ class Panels extends Backbone.View
 
 		@subviews.push panelsMenu
 
-	# renderHeader: ->
-	# 	@$('header').html headerTpl
-	# 		entryTermSingular: config.get('entryTermSingular')
-	# 		entry: @model
-	# 		resultIds: config.get('facetedSearchResponse')?.get('ids') ? []
-	# 		entries: entries
-
 	renderPanels: ->
 		@$('.panels').html ''
 		@renderPanel panel for panel in config.get('selectedPanels').models
 
-	renderPanel: (panel) ->		
+	renderPanel: (panel) ->
 		if panel.get('type') is 'facsimile'
 			view = @renderFacscimile panel.id
 		else

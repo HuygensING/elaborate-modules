@@ -88,6 +88,22 @@ class AnnotationsView extends Backbone.View
 
 	destroy: -> @remove()
 
+	highlightTerms: (terms) ->
+		for term in terms
+			$spans = @$("ol li > span:contains(#{term})")
+
+			# We want to ignore html tags lying between the letters of the searched term.
+			term = term.split('').join('(</?\\w+>)*')
+
+			for span in $spans
+				$span = $(span)
+				$span.parent('li').addClass 'show'
+				regex = new RegExp(term, "gi")
+				html = $span.html().replace(regex, "<span class=\"highlight-term\">$&</span>")
+				$span.html html
+
+		# @scrollIntoView @$('span.highlight-term').first()
+
 	resetAnnotations: ->
 		@$('ol li.show').removeClass 'show'
 
@@ -99,21 +115,24 @@ class AnnotationsView extends Backbone.View
 		$target.toggleClass('show').siblings().removeClass 'show'
 
 	slideAnnotations: (markerId, supTop) ->
+		console.log 'slide'
 		$li = @$('li[data-id="'+markerId+'"]')
 
 		# To align an annotation in the list with the corresponding marker,
 		# we set the top position of the list (<ol>) to the position of the marker
 		# minus the position of the annotation (<li>) within the list and
 		# subtract the height of the header (40px) and add some text offset (4px).
-		top = supTop - $li.position().top - 36
+		liTop = supTop - $li.position().top - 36
 
 		# Scroll the list to it's new top position.
-		@$('ol').animate top: top, 400, =>
-			# Scroll the annotation into view if it is not visible for the user.
-			unless dom($li[0]).inViewport()
-				liAbsoluteTop = $li.offset().top
-				# Firefox sets overflow to html (instead of body) so we call body ánd html.
-				@options.scrollEl.animate scrollTop: liAbsoluteTop - 20
+		@$('ol').animate top: liTop, 400, =>
+			newScrollPos = dom($li[0]).position(@options.scrollEll).top - (@options.scrollEl.offset().top + 30)
+
+			# Snap to top if we are close (< 300px)
+			newScrollPos = 0 if newScrollPos < 300
+
+			unless @options.scrollEl.scrollTop() < newScrollPos < @options.scrollEl.height() + @options.scrollEl.scrollTop()
+				@options.scrollEl.animate scrollTop: newScrollPos
 
 	startListening: ->
 		@listenTo @options.eventBus, 'toggle:annotation', (markerId, supTop) =>

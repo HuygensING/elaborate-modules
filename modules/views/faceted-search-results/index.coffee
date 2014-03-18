@@ -43,10 +43,14 @@ class FacetedSearchResults extends Views.Base
 		@
 
 	renderFacetedSearch: ->
+		sortParameters = []
+		sortParameters.push fieldname: level, direction: 'asc' for level in @options.levels
+
 		# @subviews.facetedSearch = new Views.FacetedSearch
 		@subviews.facetedSearch = new Views.FacetedSearch
 			# baseUrl: config.get('baseUrl')
 			# searchPath: 'projects/'+@project.id+'/search'
+			textSearch: @options.textSearch
 			searchPath: @options.searchUrl
 			token: token.get()
 			textSearchOptions:
@@ -54,13 +58,20 @@ class FacetedSearchResults extends Views.Base
 				searchInAnnotations: true
 				searchInTranscriptions: true
 			queryOptions:
+				sortParameters: sortParameters
 				resultRows: @resultRows
 				resultFields: @options.levels
 		@$('.faceted-search-placeholder').html @subviews.facetedSearch.el
 
 		@listenTo @subviews.facetedSearch, 'unauthorized', => Backbone.history.navigate 'login', trigger: true
 
-		@listenTo @subviews.facetedSearch, 'results:change', (responseModel) =>
+		@listenTo @subviews.facetedSearch, 'change:page', (responseModel) =>
+			@subviews.searchResult.renderListItemsPage responseModel
+
+			# Send the result to the parent view.
+			@trigger 'change:results', responseModel
+
+		@listenTo @subviews.facetedSearch, 'change:results', (responseModel) =>
 			@renderResult responseModel
 
 			# We check the flag to see if the editMultipleMetadata form was active when the results changed.
@@ -69,44 +80,23 @@ class FacetedSearchResults extends Views.Base
 				# TODO Restore editMultipleMetadata form. Not easy because it is rerendered by result:change,
 				# but we need it's state (filled in inputs, selected checkboxes, etc)
 
+			# Send the result to the parent view.
 			@trigger 'change:results', responseModel
 
-	# renderHeader: (responseModel) ->
-	# 	@el.querySelector('h3.numfound').innerHTML = responseModel.get('numFound') + " #{config.get('entryTermPlural')} found"
-
-	# 	@renderLevels()
-
-	# 	if @subviews.pagination?
-	# 		@stopListening @subviews.pagination
-	# 		@subviews.pagination.destroy()
-
-	# 	@subviews.pagination = new Views.Pagination
-	# 		start: responseModel.get('start')
-	# 		rowCount: @resultRows
-	# 		resultCount: responseModel.get('numFound')
-	# 	@listenTo @subviews.pagination, 'change:pagenumber', (pagenumber) => @subviews.facetedSearch.page pagenumber
-	# 	@$('.pagination').html @subviews.pagination.el
-
-	# renderLevels: ->
-	# 	@subviews.sortLevels = new Views.SortLevels
-	# 		levels: @options.levels
-	# 		entryMetadataFields: @options.entryMetadataFields
-	# 	@$('header li.levels').html @subviews.sortLevels.$el
-		
-	# 	@listenTo @subviews.sortLevels, 'change', (sortParameters) => 
-	# 		@subviews.facetedSearch.refresh sortParameters: sortParameters
-
 	renderResult: (responseModel) ->
-		@subviews.searchResult = new Views.SearchResult
-			responseModel: responseModel
-			levels: @options.levels
-			entryMetadataFields: @options.entryMetadataFields
-			resultRows: @resultRows
-		@$('.resultview').html @subviews.searchResult.$el
+		unless @subviews.searchResult?
+			@subviews.searchResult = new Views.SearchResult
+				responseModel: responseModel
+				levels: @options.levels
+				entryMetadataFields: @options.entryMetadataFields
+				resultRows: @resultRows
+			@$('.resultview').html @subviews.searchResult.$el
 
-		@listenTo @subviews.searchResult, 'change:sort-levels', (sortParameters) => @subviews.facetedSearch.refresh sortParameters: sortParameters
-		@listenTo @subviews.searchResult, 'change:pagination', (pagenumber) => @subviews.facetedSearch.page pagenumber
-		@listenTo @subviews.searchResult, 'navigate:entry', (id, terms, textLayer) => @trigger 'navigate:entry', id, terms, textLayer
+			@listenTo @subviews.searchResult, 'change:sort-levels', (sortParameters) => @subviews.facetedSearch.refresh sortParameters: sortParameters
+			@listenTo @subviews.searchResult, 'change:pagination', (pagenumber) => @subviews.facetedSearch.page pagenumber
+			@listenTo @subviews.searchResult, 'navigate:entry', (id, terms, textLayer) => @trigger 'navigate:entry', id, terms, textLayer
+		else
+			@subviews.searchResult.renderListItems responseModel
 
 	# ### Events
 	events:
@@ -146,7 +136,7 @@ class FacetedSearchResults extends Views.Base
 
 	toggleEditMultipleMetadata: ->
 		# ul.entries is used twice so we define it on top.
-		entries = $('ul.entries')
+		entries = $('div.entries')
 
 		@$('.resultview').toggleClass 'edit-multiple-entry-metadata'
 
