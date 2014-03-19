@@ -62,15 +62,12 @@ class Panels extends Backbone.View
 
 		@
 
-	setHeights: ->
-		panels = $('article .panels')
-		panels.height $(window).height() - panels.offset().top
-
-		metadataList = $('article .metadata ul')
-		metadataList.css 'max-height', $(window).height() - metadataList.offset().top
-
 	postRender: ->
 		@setHeights()
+
+		# Send the scroll top of the panels div to the facsimile panels, so we can stick it to the top.
+		facsimilePanels = config.get('selectedPanels').where type: 'facsimile'
+		@$('.panels').scroll => facsimilePanel.get('view').updatePosition @$('.panels').scrollTop() for facsimilePanel in facsimilePanels
 
 		if @options.layerSlug?
 			activePanel = config.get('selectedPanels').get us.capitalize @options.layerSlug
@@ -112,11 +109,11 @@ class Panels extends Backbone.View
 		if panel.get('type') is 'facsimile'
 			view = @renderFacscimile panel.id
 		else
-			view = @renderTextLayer panel.id
+			view = @renderTextLayer panel.id, panel.get('annotationsVisible')
 
 		panel.set 'view', view
 
-		@$('.panels').append view.$el
+		@$('.panels').append panel.get('view').el
 		
 		dom(panel.get('view').el).toggle 'inline-block', panel.get('show')
 
@@ -130,12 +127,13 @@ class Panels extends Backbone.View
 
 		facsimilePanel
 
-	renderTextLayer: (textLayer) ->
+	renderTextLayer: (textLayer, annotationsVisible) ->
 		options =
 			paralleltexts: @model.get('paralleltexts')
 			annotationTypes: @model.get('annotationTypes')
 			textLayer: textLayer
 			scrollEl: @$('.panels')
+			annotationsVisible: annotationsVisible
 
 		options.annotation = @options.annotation if @options.annotation?
 		options.term = @options.mark if @options.mark?
@@ -154,8 +152,17 @@ class Panels extends Backbone.View
 
 	# ### Methods
 	destroy: ->
+		@$('.panels').unbind 'scroll'
+
 		view.destroy() for view in @subviews
 		@remove()
+
+	setHeights: ->
+		panels = $('article .panels')
+		panels.height $(window).height() - panels.offset().top
+
+		metadataList = $('article .metadata ul')
+		metadataList.css 'max-height', $(window).height() - metadataList.offset().top
 
 	startListening: ->
 		@listenTo config.get('selectedPanels'), 'change:show', (panel, value, options) =>
@@ -163,6 +170,9 @@ class Panels extends Backbone.View
 			$el.toggle value
 			if value
 				@$('.panels').animate scrollLeft: $el.position().left
-		@listenTo config.get('selectedPanels'), 'sort', @renderPanels
+
+		@listenTo config.get('selectedPanels'), 'sort', =>
+			for panel in config.get('selectedPanels').models
+				@$('.panels').append panel.get('view').el 
 	
 module.exports = Panels

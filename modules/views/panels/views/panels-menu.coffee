@@ -105,7 +105,7 @@ class PanelsMenu extends Backbone.View
 
 	toggleOption: (ev) ->
 		return if @dragEl?
-		
+
 		target = @$(ev.currentTarget)
 		icon = target.find('i.checkbox')
 		icon.toggleClass 'fa-square-o'

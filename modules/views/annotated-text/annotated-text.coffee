@@ -31,6 +31,7 @@ class AnnotatedText extends Backbone.View
 
 	initialize: -> 
 		@options.autoListening ?= true
+		@options.annotationsVisible ?= true
 		@options.scrollEl ?= $('html body')
 
 		# console.log @options
@@ -43,7 +44,6 @@ class AnnotatedText extends Backbone.View
 		@textView.remove() if @textView?
 		@textView = new Views.Text
 			paralleltexts: @options.paralleltexts
-			# textlayers: @options.textlayers
 			textLayer: @options.textLayer
 			eventBus: eventBus
 			scrollEl: @options.scrollEl
@@ -62,16 +62,12 @@ class AnnotatedText extends Backbone.View
 			scrollEl: @options.scrollEl
 		@$el.append @annotationsView.$el
 
-		@toggleAnnotations $sups.length > 0
+		annotationsVisible = $sups.length > 0 and @options.annotationsVisible
+		@toggleAnnotations annotationsVisible
 
 		@textView.$('i.toggle-annotations').hide() if $sups.length is 0
 
 		@startListening() if @options.autoListening
-
-		# setTimeout (=>
-		# 	@textView.highlightAnnotation @options.annotation if @options.annotation?
-		# 	@textView.markTerm @options.term if @options.term?
-		# ), 1000
 
 	# ### Methods
 
@@ -82,6 +78,8 @@ class AnnotatedText extends Backbone.View
 		@remove()
 
 	toggleAnnotations: (showing) ->
+		@trigger 'toggle:annotations', showing
+		
 		@$el.toggleClass 'with-annotations', showing
 		@$el.toggleClass 'without-annotations', !showing
 

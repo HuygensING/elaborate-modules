@@ -7,7 +7,9 @@ class FacsimilePanel extends Backbone.View
 	className: 'facsimile'
 
 	# ### Initialize
-	initialize: -> @render()
+	initialize: -> 
+		@render()
+
 
 	# ### Render
 	render: ->
@@ -17,6 +19,9 @@ class FacsimilePanel extends Backbone.View
 
 		@
 
+	# ### Methods
 	destroy: -> @remove()
+
+	updatePosition: (top) -> @$el.css 'margin-top', top
 
 module.exports = FacsimilePanel
