@@ -75,31 +75,37 @@ class PanelsMenu extends Backbone.View
 					@placeholder.insertAfter(li)
 					break
 
+	# TODO remove stopIt and fix click/mouseup different
 	stopDrag: (ev) ->
-		# Only do drag logic if the @drag has been called, we can check this by the elements
-		# position, because @drag sets it to 'absolute'.
-		if @dragEl? and @dragEl.css('position') is 'absolute'
-			selectedPanels = config.get('selectedPanels')
+		stopIt = =>
+			# Only do drag logic if the @drag has been called, we can check this by the elements
+			# position, because @drag sets it to 'absolute'.
+			if @dragEl? and @dragEl.css('position') is 'absolute'
+				selectedPanels = config.get('selectedPanels')
 
-			@dragEl.insertAfter @placeholder
-			@placeholder.hide()
-			@dragEl.css 'position', 'static'
-			@dragEl.css 'top', 'auto'
-			panelId = @dragEl.attr 'data-id'
-			newIndex = @$('ul li:not(.placeholder)').index @dragEl
-			oldIndex = selectedPanels.indexOf selectedPanels.get(panelId)
+				@dragEl.insertAfter @placeholder
+				@placeholder.hide()
+				@dragEl.css 'position', 'static'
+				@dragEl.css 'top', 'auto'
+				panelId = @dragEl.attr 'data-id'
+				newIndex = @$('ul li:not(.placeholder)').index @dragEl
+				oldIndex = selectedPanels.indexOf selectedPanels.get(panelId)
 
-			if oldIndex isnt newIndex
-				selectedPanels.models.splice(newIndex, 0, selectedPanels.models.splice(oldIndex, 1)[0])
-				selectedPanels.trigger 'sort'
+				if oldIndex isnt newIndex
+					selectedPanels.models.splice(newIndex, 0, selectedPanels.models.splice(oldIndex, 1)[0])
+					selectedPanels.trigger 'sort'
 
-		# Always set @dragEl to null, because @dragEl is also set on a click (mousedown is triggered)
-		@dragEl = null
+			# Always set @dragEl to null, because @dragEl is also set on a click (mousedown is triggered)
+			@dragEl = null
+
+		setTimeout stopIt, 50
 
 	toggleMenu: (ev) ->
 		@$('ul').slideToggle('fast')
 
 	toggleOption: (ev) ->
+		return if @dragEl?
+		
 		target = @$(ev.currentTarget)
 		icon = target.find('i.checkbox')
 		icon.toggleClass 'fa-square-o'
