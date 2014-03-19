@@ -43,6 +43,8 @@ class Panels extends Backbone.View
 
 			@model.fetch().done => modelLoaded()
 
+		$(window).resize @setHeights
+
 	# ### Render
 	render: ->
 		rtpl = tpl
@@ -60,8 +62,15 @@ class Panels extends Backbone.View
 
 		@
 
+	setHeights: ->
+		panels = $('article .panels')
+		panels.height $(window).height() - panels.offset().top
+
+		metadataList = $('article .metadata ul')
+		metadataList.css 'max-height', $(window).height() - metadataList.offset().top
+
 	postRender: ->
-		@$('.panels').height $(window).height() - @$('.panels').offset().top
+		@setHeights()
 
 		if @options.layerSlug?
 			activePanel = config.get('selectedPanels').get us.capitalize @options.layerSlug
