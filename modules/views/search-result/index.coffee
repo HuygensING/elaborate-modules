@@ -32,13 +32,17 @@ class SearchResult extends Views.Base
 
 		@renderListItems()
 
+		$(window).resize =>
+			entries = @$('div.entries')
+			entries.height $(window).height() - entries.offset().top
+
 		@
 
 	renderLevels: ->
 		@subviews.sortLevels = new Views.SortLevels
 			levels: @options.levels
 			entryMetadataFields: @options.entryMetadataFields
-		@$('header li.levels').html @subviews.sortLevels.$el
+		@$('header nav ul').prepend @subviews.sortLevels.$el
 		
 		@listenTo @subviews.sortLevels, 'change', (sortParameters) => @trigger 'change:sort-levels', sortParameters
 

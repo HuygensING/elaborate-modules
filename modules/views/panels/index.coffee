@@ -69,10 +69,9 @@ class Panels extends Backbone.View
 		facsimilePanels = config.get('selectedPanels').where type: 'facsimile'
 		@$('.panels').scroll => facsimilePanel.get('view').updatePosition @$('.panels').scrollTop() for facsimilePanel in facsimilePanels
 
-		if @options.layerSlug?
-			activePanel = config.get('selectedPanels').get us.capitalize @options.layerSlug
-			return unless activePanel?
-			
+		activePanel = config.get('selectedPanels').get us.capitalize config.get('activeTextLayerId')
+
+		if activePanel?		
 			activePanelLeft = activePanel.get('view').$el.position().left
 			activePanelWidth = activePanel.get('view').$el.width()
 			windowWidth = $(window).width()
@@ -87,12 +86,21 @@ class Panels extends Backbone.View
 			else if @options.annotation?
 				activePanel.get('view').highlightAnnotation @options.annotation
 
-			if @options.terms?
-				# console.log @options.highlightAnnotations, @options
-				if @options.highlightAnnotations
-					activePanel.get('view').highlightTermsInAnnotations Object.keys(@options.terms)
-				else
-					activePanel.get('view').highlightTerms Object.keys(@options.terms)
+			if config.get('facetedSearchResponse')?
+				# Get the result from the faceted search response for this entry.
+				result = _.findWhere config.get('facetedSearchResponse').get('results'), id: @model.id
+
+				# Get the terms from the result and convert keys to array.
+				# {piet: 4, poet: 2} => ['piet', 'poet']
+				terms = Object.keys(result.terms)
+
+				if terms.length > 0
+					# If the active layer is an annotations layer, we highlight the terms in the annotations.
+					if config.get('activeTextLayerIsAnnotationLayer')
+						activePanel.get('view').highlightTermsInAnnotations terms
+					# Otherwise we highlight the terms in the textlayer.
+					else
+						activePanel.get('view').highlightTerms terms
 
 	renderPanelsMenu: ->
 		@options.facsimiles = @model.get('facsimiles')

@@ -115,7 +115,6 @@ class AnnotationsView extends Backbone.View
 		$target.toggleClass('show').siblings().removeClass 'show'
 
 	slideAnnotations: (markerId, supTop) ->
-		console.log 'slide'
 		$li = @$('li[data-id="'+markerId+'"]')
 
 		# To align an annotation in the list with the corresponding marker,

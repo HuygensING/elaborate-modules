@@ -4,6 +4,8 @@ Fn = require 'hilib/src/utils/general'
 
 Base = require 'hilib/src/views/base'
 
+config = require '../../../models/config'
+
 # Tpl = require 'text!html/entry/metadata.html'
 tpl = require '../templates/entry-list-item.jade'
 
@@ -46,10 +48,12 @@ class EntryListItem extends Base
 		'click': (ev) ->
 			unless @$el.hasClass 'fulltext'
 				if @$('.default-mode').is(":visible")
+					config.set 'activeTextLayerId', null
 					@trigger 'click', @options.entryData.id, @options.entryData.terms
 				else if @$('.edit-mode').is(":visible")
 					@$('input')[0].checked = !@$('input')[0].checked
 		'click .keywords > ul > li': (ev) ->
+			config.set 'activeTextLayerId', ev.currentTarget.getAttribute 'data-textlayer'
 			@trigger 'click', @options.entryData.id, @options.entryData.terms, ev.currentTarget.getAttribute 'data-textlayer'
 
 module.exports = EntryListItem

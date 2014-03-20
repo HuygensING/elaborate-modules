@@ -10,6 +10,10 @@ tpl = require './templates/main.jade'
 # 	project	Backbone.Model The current project
 
 class SortLevels extends Views.Base
+
+	tagName: 'li'
+
+	className: 'sort-levels'
 	
 	# ### Initialize
 	initialize: -> @render()

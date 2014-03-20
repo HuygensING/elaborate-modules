@@ -3,15 +3,9 @@ spotcolor2 = #FFBEFC
 
 .resultview
 	div.entries
-		ul
+		& > ul
 			& > li
 				margin-bottom 12px
-
-				&.fulltext:hover
-					cursor default
-
-					label.main
-						background none
 
 				&:hover
 					cursor pointer
@@ -19,6 +13,13 @@ spotcolor2 = #FFBEFC
 					label.main
 						background lighten(#6CA1E5, 80%)
 						cursor pointer
+
+				&.fulltext:hover
+					cursor default
+
+					label.main
+						background none
+						cursor default
 				
 				.edit-mode
 					display none
