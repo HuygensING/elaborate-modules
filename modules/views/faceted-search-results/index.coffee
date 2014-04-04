@@ -1,3 +1,4 @@
+Backbone = require 'backbone'
 $ = require 'jquery'
 
 Fn = require 'hilib/src/utils/general'

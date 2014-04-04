@@ -9,7 +9,12 @@ class Config extends Backbone.Model
 	url: -> "#{basePath}/data/config.json"
 	
 	defaults: ->
-		restUrl: 'http://rest.elaborate.huygens.knaw.nl/'
+		# DEV
+		restUrl: 'http://demo7.huygens.knaw.nl/elab4testBE/'
+		
+		# PROD
+		# restUrl: 'https://rest.elaborate.huygens.knaw.nl/'
+
 		basePath: basePath
 		appRootElement: '#app'
 		entryTermSingular: 'entry'
