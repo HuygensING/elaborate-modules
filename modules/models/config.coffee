@@ -19,7 +19,7 @@ class Config extends Backbone.Model
 		appRootElement: '#app'
 		entryTermSingular: 'entry'
 		entryTermPlural: 'entries'
-		searchPath: "/api/search"
+		searchPath: "api/search"
 		resultRows: 25
 		annotationsIndexPath: "#{basePath}/data/annotation_index.json"
 		roles:

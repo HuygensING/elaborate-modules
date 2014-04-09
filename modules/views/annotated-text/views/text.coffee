@@ -115,8 +115,11 @@ class EntryTextView extends Backbone.View
 	scrollIntoView: ($el) ->
 		if $el.length > 0 and not dom($el[0]).inViewport()
 			supAbsoluteTop = $el.offset().top
+			
+			# Subtrackt the area above scrollEl (.panels)
+			# TODO Fix me, this does not scale, 372 is hard coded. No time to fix now.
 			@options.scrollEl.animate
-				scrollTop: supAbsoluteTop - 40
+				scrollTop: supAbsoluteTop - 372
 
 	annotationStartNode: (markerID) -> @el.querySelector("span[data-marker=\"begin\"][data-id=\"#{markerID}\"]")
 	annotationEndNode: (markerID) -> @el.querySelector("sup[data-marker=\"end\"][data-id=\"#{markerID}\"]")

@@ -69,8 +69,11 @@ class Panels extends Backbone.View
 		facsimilePanels = config.get('selectedPanels').where type: 'facsimile'
 		@$('.panels').scroll => facsimilePanel.get('view').updatePosition @$('.panels').scrollTop() for facsimilePanel in facsimilePanels
 
-		activePanel = config.get('selectedPanels').get us.capitalize config.get('activeTextLayerId')
+		# activePanel = config.get('selectedPanels').get us.capitalize config.get('activeTextLayerId')
+		activeLayerSlug = @options.layerSlug or config.get('activeTextLayerId')
+		activePanel = config.get('selectedPanels').get us.capitalize activeLayerSlug
 
+		# console.log activePanel
 		if activePanel?		
 			activePanelLeft = activePanel.get('view').$el.position().left
 			activePanelWidth = activePanel.get('view').$el.width()
@@ -86,7 +89,7 @@ class Panels extends Backbone.View
 			else if @options.annotation?
 				activePanel.get('view').highlightAnnotation @options.annotation
 
-			if config.get('facetedSearchResponse')?
+			if not @options.annotation? and config.get('facetedSearchResponse')?
 				# Get the result from the faceted search response for this entry.
 				result = _.findWhere config.get('facetedSearchResponse').get('results'), id: @model.id
 
@@ -167,10 +170,15 @@ class Panels extends Backbone.View
 
 	setHeights: ->
 		panels = $('article .panels')
-		panels.height $(window).height() - panels.offset().top
+
+		panelHeight = $(window).height() - panels.offset().top
+		panels.height panelHeight
 
 		metadataList = $('article .metadata ul')
 		metadataList.css 'max-height', $(window).height() - metadataList.offset().top
+
+		facsimileHeight = panelHeight - @$('.panels .facsimile header').height()
+		@$('.panels .facsimile iframe').height facsimileHeight
 
 	startListening: ->
 		@listenTo config.get('selectedPanels'), 'change:show', (panel, value, options) =>
