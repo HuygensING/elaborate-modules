@@ -2,6 +2,9 @@
 	html, body
 		overflow visible !important
 
+	body > header
+		padding 0
+
 	#main
 		.entries
 			.entry
@@ -9,6 +12,10 @@
 					display none
 
 				article
+					h2, h3, h4
+						margin 0
+						padding 0
+
 					.panels-menu, .metadata
 						display none
 
@@ -20,8 +27,10 @@
 
 						.elaborate-annotated-text
 							width 100%
-							display block
 							margin-bottom 100px
+
+							&.visible
+								display block !important
 
 							.text, .annotations
 								width 100%

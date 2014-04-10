@@ -1,7 +1,8 @@
 Backbone = require 'backbone'
+$ = require 'jquery'
+Backbone.$ = $
 _ = require 'underscore'
 us = require 'underscore.string'
-$ = require 'jquery'
 
 dom = require 'hilib/src/utils/dom'
 
@@ -126,7 +127,8 @@ class Panels extends Backbone.View
 
 		@$('.panels').append panel.get('view').el
 		
-		dom(panel.get('view').el).toggle 'inline-block', panel.get('show')
+		className = if panel.get('show') then 'visible' else 'hidden'
+		panel.get('view').$el.addClass className
 
 
 	renderFacscimile: (zoomUrl) ->
@@ -178,12 +180,18 @@ class Panels extends Backbone.View
 		metadataList.css 'max-height', $(window).height() - metadataList.offset().top
 
 		facsimileHeight = panelHeight - @$('.panels .facsimile header').height()
-		@$('.panels .facsimile iframe').height facsimileHeight
+		@$('.panels .facsimile iframe').height facsimileHeight - 20
 
 	startListening: ->
 		@listenTo config.get('selectedPanels'), 'change:show', (panel, value, options) =>
 			$el = panel.get('view').$el
-			$el.toggle value
+
+			addClassName = if value then 'visible' else 'hidden'
+			removeClassName = if value then 'hidden' else 'visible'
+
+			$el.removeClass removeClassName
+			$el.addClass addClassName
+
 			if value
 				@$('.panels').animate scrollLeft: $el.position().left
 

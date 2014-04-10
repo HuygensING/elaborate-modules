@@ -1,5 +1,6 @@
 Backbone = require 'backbone'
 $ = require 'jquery'
+_ = require 'underscore'
 
 Fn = require 'hilib/src/utils/general'
 dom = require 'hilib/src/utils/dom'
@@ -93,7 +94,11 @@ class FacetedSearchResults extends Views.Base
 				resultRows: @resultRows
 			@$('.resultview').html @subviews.searchResult.$el
 
-			@listenTo @subviews.searchResult, 'change:sort-levels', (sortParameters) => @subviews.facetedSearch.refresh sortParameters: sortParameters
+			@listenTo @subviews.searchResult, 'change:sort-levels', (sortParameters) => 
+				newQueryOptions =
+					sortParameters: sortParameters
+					resultFields: _.pluck(sortParameters, 'fieldname')
+				@subviews.facetedSearch.refresh newQueryOptions
 			@listenTo @subviews.searchResult, 'change:pagination', (pagenumber) => @subviews.facetedSearch.page pagenumber
 			@listenTo @subviews.searchResult, 'navigate:entry', (id, terms, textLayer) => @trigger 'navigate:entry', id, terms, textLayer
 		else
