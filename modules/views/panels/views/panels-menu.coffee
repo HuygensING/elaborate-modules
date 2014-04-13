@@ -53,7 +53,7 @@ class PanelsMenu extends Backbone.View
 		if @dragEl?				
 			dragElTop = ev.clientY - @$('ul').offset().top - @dragEl.height()/2
 
-			if 0 < dragElTop < @$('ul').height()
+			if 0 < dragElTop < @$('ul').outerHeight()
 				@placeholder.insertBefore @dragEl
 				@placeholder.show()
 				@dragEl.css 'position', 'absolute'
