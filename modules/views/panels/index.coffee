@@ -171,16 +171,18 @@ class Panels extends Backbone.View
 		@remove()
 
 	setHeights: ->
-		panels = $('article .panels')
+		panels = @$('.panels')
 
-		panelHeight = $(window).height() - panels.offset().top
-		panels.height panelHeight
+		if panels.length > 0
+			panelHeight = $(window).height() - panels.offset().top
+			panels.height panelHeight
 
-		metadataList = $('article .metadata ul')
-		metadataList.css 'max-height', $(window).height() - metadataList.offset().top
+			metadataList = @$('.metadata ul')
+			metadataList.css 'max-height', $(window).height() - metadataList.offset().top
 
-		facsimileHeight = panelHeight - @$('.panels .facsimile header').height()
-		@$('.panels .facsimile iframe').height facsimileHeight - 20
+			facsimileHeight = panelHeight - panels.find('.facsimile header').height()
+
+			panels.find('.facsimile iframe').height facsimileHeight - 20
 
 	startListening: ->
 		@listenTo config.get('selectedPanels'), 'change:show', (panel, value, options) =>
