@@ -98,9 +98,11 @@ class FacetedSearchResults extends Views.Base
 				newQueryOptions =
 					sortParameters: sortParameters
 					resultFields: _.pluck(sortParameters, 'fieldname')
+
 				@subviews.facetedSearch.refresh newQueryOptions
 			@listenTo @subviews.searchResult, 'change:pagination', (pagenumber) => @subviews.facetedSearch.page pagenumber
 			@listenTo @subviews.searchResult, 'navigate:entry', (id, terms, textLayer) => @trigger 'navigate:entry', id, terms, textLayer
+			@listenTo @subviews.searchResult, 'check:entryListItem', (id) => @subviews.editMultipleEntryMetadata.activateSaveButton()
 		else
 			@subviews.searchResult.renderListItems responseModel
 
@@ -159,7 +161,7 @@ class FacetedSearchResults extends Views.Base
 			# Add listeners.
 			@listenToOnce @subviews.editMultipleEntryMetadata, 'close', => @toggleEditMultipleMetadata()
 			@listenToOnce @subviews.editMultipleEntryMetadata, 'saved', (entryIds) => 
-				@subviews.facetedSearch.refresh()
+				@subviews.facetedSearch.reset()
 				@trigger 'editmultipleentrymetadata:saved', entryIds
 		# Class has been removed, so we remove the form
 		else

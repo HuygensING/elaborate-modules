@@ -52,6 +52,7 @@ class EntryListItem extends Base
 					@trigger 'click', @options.entryData.id, @options.entryData.terms
 				else if @$('.edit-mode').is(":visible")
 					@$('input')[0].checked = !@$('input')[0].checked
+					@trigger 'check', @options.entryData.id
 		'click .keywords > ul > li': (ev) ->
 			config.set 'activeTextLayerId', ev.currentTarget.getAttribute 'data-textlayer'
 			@trigger 'click', @options.entryData.id, @options.entryData.terms, ev.currentTarget.getAttribute 'data-textlayer'

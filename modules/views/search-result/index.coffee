@@ -84,6 +84,7 @@ class SearchResult extends Views.Base
 			# Listen to the click event, which bubbles up all the way to the faceted search, so it can pass
 			# it to the parent view and trigger the router to navigate to the entry.
 			@listenTo entryListItem, 'click', (id, terms, textLayer) -> @trigger 'navigate:entry', id, terms, textLayer
+			@listenTo entryListItem, 'check', (id) -> @trigger 'check:entryListItem', id
 
 			# Push every list item into the listItems array, so we can remove them on re-render.
 			listItems.push entryListItem
