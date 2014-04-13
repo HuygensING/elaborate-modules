@@ -39,10 +39,10 @@ class SortLevels extends Views.Base
 			@render()
 
 		# TODO turn off on destroy
-		@$el.mouseleave (ev) => 
+		@$el.mouseleave (ev) =>
 			# The leave event is triggered when the user clicks the <select>,
 			# so we check if the target isn't the <select>.
-			@$('div.levels').hide() if ev.target.tagName isnt 'SELECT'
+			@$('div.levels').hide() if ev.target.tagName isnt 'SELECT' and ev.target.tagName isnt 'OPTION'
 
 	# ### Events
 	events: ->
