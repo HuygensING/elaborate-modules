@@ -9,7 +9,7 @@ class Config extends Backbone.Model
 	url: -> "#{basePath}/data/config.json"
 	
 	defaults: ->
-		# DEV
+		# DEV/TEST
 		restUrl: 'http://demo7.huygens.knaw.nl/elab4testBE/'
 		
 		# PROD

@@ -9,6 +9,12 @@ h3= 'Edit metadata of multiple ' + config.get('entryTermPlural')
 	.cell.span1
 		form
 			ul
+				li
+					label Publishable
+					i.fa.fa-square-o(data-name="Publishable")
+					//- input.empty(type="checkbox", tabindex=entrymetadatafields.length * 2 + 3, data-name="Publishable")
+					input(style="margin-right: 137px", type="checkbox", name="Publishable", tabindex=entrymetadatafields.length * 2 + 4)
+
 				each field, key in entrymetadatafields
 					if key < entrymetadatafields.length/2
 						li 
@@ -26,12 +32,6 @@ h3= 'Edit metadata of multiple ' + config.get('entryTermPlural')
 							i.fa.fa-square-o(data-name=field)
 							//- input.include(type="checkbox", tabindex=key * 2 + 1, data-name=field)
 							input(type="text", name=field, tabindex=key * 2 + 2)
-				li
-					label Publishable
-					i.fa.fa-square-o(data-name="Publishable")
-					//- input.empty(type="checkbox", tabindex=entrymetadatafields.length * 2 + 3, data-name="Publishable")
-					input(style="margin-right: 137px", type="checkbox", name="Publishable", tabindex=entrymetadatafields.length * 2 + 4)
-
 
 footer
 	button(name="cancel", tabindex=entrymetadatafields.length * 2 + 5) Cancel

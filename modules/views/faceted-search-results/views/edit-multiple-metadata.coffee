@@ -1,3 +1,4 @@
+Backbone = require 'backbone'
 $ = require 'jquery'
 _ = require 'underscore'
 config = require '../../../models/config'
@@ -20,6 +21,10 @@ class EditMultipleMetadata extends Views.Base
 	initialize: ->
 		super
 
+		@listenTo Backbone, 'entrymetadatafields:update', (fields) =>
+			@options.entryMetadataFields = fields
+			@render()
+
 		@render()
 
 	# ### Render
@@ -30,7 +35,8 @@ class EditMultipleMetadata extends Views.Base
 		@el.innerHTML = rtpl
 
 		# Subtract 70 for the header and the footer.
-		@$('.row').css 'max-height', (($(window).height() - $('.resultview').offset().top) / 2) - 70
+		if $('.resultview').length > 0
+			@$('.row').css 'max-height', (($(window).height() - $('.resultview').offset().top) / 2) - 70
 
 		@
 

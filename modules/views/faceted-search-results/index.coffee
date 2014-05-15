@@ -31,7 +31,9 @@ class FacetedSearchResults extends Views.Base
 
 		@resultRows = 50
 
-		# @options.projects.getCurrent (@project) => @render()
+		@listenTo Backbone, 'entrymetadatafields:update', (fields) =>
+			@options.entryMetadataFields = fields
+
 		@render()
 
 	# ### Render
@@ -48,7 +50,6 @@ class FacetedSearchResults extends Views.Base
 		sortParameters = []
 		sortParameters.push fieldname: level, direction: 'asc' for level in @options.levels
 
-		# @subviews.facetedSearch = new Views.FacetedSearch
 		@subviews.facetedSearch = new Views.FacetedSearch
 			# baseUrl: config.get('baseUrl')
 			# searchPath: 'projects/'+@project.id+'/search'
