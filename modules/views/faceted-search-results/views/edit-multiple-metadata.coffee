@@ -136,8 +136,11 @@ class EditMultipleMetadata extends Views.Base
 		for i in @el.querySelectorAll 'i.fa.include'
 			name = i.getAttribute('data-name')
 			input = @el.querySelector 'input[name="'+name+'"]'
-			@settings[name] = if input.type is 'checkbox' then false else ''
-
+			if input.type is 'checkbox'
+				@settings[name] = if input.checked then true else false
+			else
+				@settings[name] = ''
+				
 		@activateSaveButton()
 
 	activateSaveButton: ->
