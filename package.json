@@ -5,15 +5,12 @@
     "name": "Gijsjan Brouwer",
     "email": "a.g.brouwer@huygens.knaw.nl"
   },
-  "main": "modules/",
+  "main": "",
   "repository": {
     "type": "git",
-    "url": ""
+    "url": "https://github.com/HuygensING/elaborate-modules"
   },
   "browserify": {
-    "transform": [
-      "jadeify",
-      "coffeeify"
-    ]
+    "transform": ["jadeify", "coffeeify"]
   }
 }
