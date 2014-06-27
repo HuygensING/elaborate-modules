@@ -1,6 +1,8 @@
 Backbone = require 'backbone'
 $ = require 'jquery'
 
+dom = require 'hilib/src/utils/dom'
+
 Views =
   Base: require 'hilib/src/views/base'
 
@@ -39,10 +41,11 @@ class SortLevels extends Views.Base
       @render()
 
     # TODO turn off on destroy
-    @$el.mouseleave (ev) =>
+    levels = @$('div.levels')
+    levels.mouseleave (ev) =>
       # The leave event is triggered when the user clicks the <select>,
       # so we check if the target isn't the <select>.
-      @$('div.levels').hide() if ev.target.tagName isnt 'SELECT' and ev.target.tagName isnt 'OPTION'
+      levels.hide() unless dom(levels[0]).hasDescendant(ev.target) or levels[0] is ev.target
 
   # ### Events
   events: ->
