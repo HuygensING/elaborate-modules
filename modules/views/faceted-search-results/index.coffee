@@ -48,25 +48,26 @@ class FacetedSearchResults extends Views.Base
 
   renderFacetedSearch: ->
     sortParameters = []
-    sortParameters.push fieldname: level, direction: 'asc' for level in @options.levels
+    for level in @options.levels
+      sortParameters.push fieldname: level, direction: 'asc'
 
     @subviews.facetedSearch = new Views.FacetedSearch
-      # baseUrl: config.get('baseUrl')
-      # searchPath: 'projects/'+@project.id+'/search'
       textSearch: @options.textSearch
       searchPath: @options.searchUrl
-      token: token.get()
+      authorizationHeaderToken: "#{token.getType()} #{token.get()}"
       textSearchOptions:
         textLayers: @options.textLayers
         searchInAnnotations: true
         searchInTranscriptions: true
       queryOptions:
         sortParameters: sortParameters
-        resultRows: @resultRows
         resultFields: @options.levels
+      resultRows: @resultRows
     @$('.faceted-search-placeholder').html @subviews.facetedSearch.el
 
-    @listenTo @subviews.facetedSearch, 'unauthorized', => Backbone.history.navigate 'login', trigger: true
+    @listenTo @subviews.facetedSearch, 'unauthorized', =>
+      console.log 'unauth'
+#      Backbone.history.navigate 'login', trigger: true
 
     @listenTo @subviews.facetedSearch, 'change:page', (responseModel) =>
       @subviews.searchResult.renderListItemsPage responseModel
@@ -85,6 +86,9 @@ class FacetedSearchResults extends Views.Base
 
       # Send the result to the parent view.
       @trigger 'change:results', responseModel
+
+    @subviews.facetedSearch.search()
+
 
   renderResult: (responseModel) ->
     unless @subviews.searchResult?

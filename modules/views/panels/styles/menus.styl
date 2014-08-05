@@ -1,3 +1,5 @@
+@import 'nib'
+
 article
 	position relative
 
@@ -60,26 +62,36 @@ article
 	.metadata
 		left 2.5%
 
-		& > ul
-			line-height 24px
-			max-width 520px
+		button
+			margin-bottom -1px
+
+		.table-container
+			display none
 			overflow-y auto
+			overflow-x hidden
+			position absolute
 
-			li
-				white-space nowrap
-				border-top 1px solid #EEE
 
-				&:first-child
-					border none
+			table
+				line-height 24px
+				border 1px solid #CCC
+				background white
 
-				label, span
-					display inline-block
+				tr:first-child
+					td
+						border none
 
-				label
-					width 120px
+				td
+					padding-left 8px
+					border-top 1px solid #EEE
 					color #555
-
-				span
-					max-width 400px
 					overflow ellipsis
-					vertical-align middle
+					vertical-align top
+
+					&:first-child
+						white-space nowrap
+
+
+					&:last-child
+						padding-right 20px
+						min-width 300px

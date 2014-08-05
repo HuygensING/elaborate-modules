@@ -4,7 +4,7 @@ $ = require 'jquery'
 dom = require 'hilib/src/utils/dom'
 
 Views =
-  Base: require 'hilib/src/views/base'
+	Base: require 'hilib/src/views/base'
 
 tpl = require './templates/main.jade'
 
@@ -13,85 +13,85 @@ tpl = require './templates/main.jade'
 
 class SortLevels extends Views.Base
 
-  tagName: 'li'
+	tagName: 'li'
 
-  className: 'sort-levels'
+	className: 'sort-levels'
 
-  # ### Initialize
-  initialize: -> @render()
+	# ### Initialize
+	initialize: -> @render()
 
-  # ### Render
-  render: ->
-    rtpl = tpl
-      levels: @options.levels
-      entryMetadataFields: @options.entryMetadataFields
-    @$el.html rtpl
+	# ### Render
+	render: ->
+		rtpl = tpl
+			levels: @options.levels
+			entryMetadataFields: @options.entryMetadataFields
+		@$el.html rtpl
 
-    @listenTo Backbone, 'sortlevels:update', (sortLevels) =>
-      @options.levels = sortLevels
+		@listenTo Backbone, 'sortlevels:update', (sortLevels) =>
+			@options.levels = sortLevels
 
-      sortParameters = []
-      sortParameters.push fieldname: level, direction: 'asc' for level in sortLevels
-      @trigger 'change', sortParameters
+			sortParameters = []
+			sortParameters.push fieldname: level, direction: 'asc' for level in sortLevels
+			@trigger 'change', sortParameters
 
-      @render()
+			@render()
 
-    @listenTo Backbone, 'entrymetadatafields:update', (fields) =>
-      @options.entryMetadataFields = fields
-      @render()
+		@listenTo Backbone, 'entrymetadatafields:update', (fields) =>
+			@options.entryMetadataFields = fields
+			@render()
 
-    # TODO turn off on destroy
-    levels = @$('div.levels')
-    levels.mouseleave (ev) =>
-      # The leave event is triggered when the user clicks the <select>,
-      # so we check if the target isn't the <select>.
-      levels.hide() unless dom(levels[0]).hasDescendant(ev.target) or levels[0] is ev.target
+		# TODO turn off on destroy
+		levels = @$('div.levels')
+		levels.mouseleave (ev) =>
+			# The leave event is triggered when the user clicks the <select>,
+			# so we check if the target isn't part of div.levels
+			levels.hide() unless dom(levels[0]).hasDescendant(ev.target) or levels[0] is ev.target
 
-  # ### Events
-  events: ->
-    'click button.toggle': 'toggleLevels'
-    'click li.search button': 'saveLevels'
-    'change div.levels select': 'changeLevels'
-    'click div.levels i.fa': 'changeAlphaSort'
+	# ### Events
+	events: ->
+		'click button.toggle': 'toggleLevels'
+		'click li.search button': 'saveLevels'
+		'change div.levels select': 'changeLevels'
+		'click div.levels i.fa': 'changeAlphaSort'
 
-  toggleLevels: (ev) ->
-    @$('div.levels').toggle()
+	toggleLevels: (ev) ->
+		@$('div.levels').toggle()
 
-  changeLevels: (ev) ->
-    @$('div.levels').addClass 'show-save-button'
+	changeLevels: (ev) ->
+		@$('div.levels').addClass 'show-save-button'
 
-    target = ev.currentTarget
+		target = ev.currentTarget
 
-    # Loop the selects.
-    for select in @el.querySelectorAll 'div.levels select'
-      # Set a select to empty if it has the same value as the user has selected.
-      select.selectedIndex = 0 if select.name isnt target.name and select.value is target.value
+		# Loop the selects.
+		for select in @el.querySelectorAll 'div.levels select'
+			# Set a select to empty if it has the same value as the user has selected.
+			select.selectedIndex = 0 if select.name isnt target.name and select.value is target.value
 
-    # Reset all selects to ascending.
-    for i in @el.querySelectorAll 'div.levels i.fa'
-      $target = @$(i)
-      $target.addClass 'fa-sort-alpha-asc'
-      $target.removeClass 'fa-sort-alpha-desc'
+		# Reset all selects to ascending.
+		for i in @el.querySelectorAll 'div.levels i.fa'
+			$target = @$(i)
+			$target.addClass 'fa-sort-alpha-asc'
+			$target.removeClass 'fa-sort-alpha-desc'
 
-  changeAlphaSort: (ev) ->
-    @$('div.levels').addClass 'show-save-button'
+	changeAlphaSort: (ev) ->
+		@$('div.levels').addClass 'show-save-button'
 
-    $target = @$(ev.currentTarget)
-    $target.toggleClass 'fa-sort-alpha-asc'
-    $target.toggleClass 'fa-sort-alpha-desc'
+		$target = @$(ev.currentTarget)
+		$target.toggleClass 'fa-sort-alpha-asc'
+		$target.toggleClass 'fa-sort-alpha-desc'
 
-  saveLevels: ->
-    sortParameters = []
+	saveLevels: ->
+		sortParameters = []
 
-    for li in @el.querySelectorAll 'div.levels li[name]'
-      select = li.querySelector('select')
+		for li in @el.querySelectorAll 'div.levels li[name]'
+			select = li.querySelector('select')
 
-      sortParameter = {}
-      sortParameter.fieldname = select.options[select.selectedIndex].value
-      sortParameter.direction = if $(li).find('i.fa').hasClass 'fa-sort-alpha-asc' then 'asc' else 'desc'
+			sortParameter = {}
+			sortParameter.fieldname = select.options[select.selectedIndex].value
+			sortParameter.direction = if $(li).find('i.fa').hasClass 'fa-sort-alpha-asc' then 'asc' else 'desc'
 
-      sortParameters.push sortParameter
+			sortParameters.push sortParameter
 
-    @trigger 'change', sortParameters
+		@trigger 'change', sortParameters
 
 module.exports = SortLevels

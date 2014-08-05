@@ -20,7 +20,7 @@ tpl = require './templates/main.jade'
 
 KEYCODE_ESCAPE = 27
 
-class Panels extends Backbone.View
+class panels extends Backbone.View
 
 	tagName: 'article'
 
@@ -30,7 +30,7 @@ class Panels extends Backbone.View
 
 		@subviews = []
 
-		modelLoaded = =>		
+		modelLoaded = =>
 			entries.setCurrent @model.id
 			@el.setAttribute 'id', 'entry-'+@model.id
 			@render()
@@ -130,7 +130,6 @@ class Panels extends Backbone.View
 		className = if panel.get('show') then 'visible' else 'hidden'
 		panel.get('view').$el.addClass className
 
-
 	renderFacscimile: (zoomUrl) ->
 		facsimilePanel = new Views.FacsimilePanel
 			entry: @model.attributes
@@ -160,7 +159,7 @@ class Panels extends Backbone.View
 	# ### Events
 	events:
 		# 'click button.toggle-metadata': -> @$('.metadata').toggleClass 'show-all'
-		'click button.toggle-metadata': -> @$('.metadata ul').slideToggle('fast')
+		'click button.toggle-metadata': -> @$('.metadata .table-container').slideToggle('fast')
 		'click i.print': -> window.print()
 
 	# ### Methods
@@ -177,8 +176,9 @@ class Panels extends Backbone.View
 			panelHeight = $(window).height() - panels.offset().top
 			panels.height panelHeight
 
-			metadataList = @$('.metadata ul')
-			metadataList.css 'max-height', $(window).height() - metadataList.offset().top
+			metadata = @$('.metadata')
+			metadataList = metadata.find('.table-container')
+			metadataList.css 'max-height', $(window).height() - metadata.offset().top - 50
 
 			facsimileHeight = panelHeight - panels.find('.facsimile header').height()
 
@@ -199,6 +199,6 @@ class Panels extends Backbone.View
 
 		@listenTo config.get('selectedPanels'), 'sort', =>
 			for panel in config.get('selectedPanels').models
-				@$('.panels').append panel.get('view').el 
-	
-module.exports = Panels
+				@$('.panels').append panel.get('view').el
+
+module.exports = panels
