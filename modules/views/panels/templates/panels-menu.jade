@@ -1,3 +1,4 @@
+// Mixins are called with a plus sign, so +listItem calls this function.
 mixin listItem(id, value)
 	li(data-id=id)
 		if selectedPanels.get(id).get('show')
@@ -11,7 +12,7 @@ button.green Panels
 ul
 	li.placeholder &nbsp;
 	each facs, i in facsimiles
-		- value = 'Facsimile '+(i+1)
+		- value = facs.title || 'Facsimile '+(i+1)
 		+listItem(facs.zoom, value)
 
 	each layer, i in textlayers.models

@@ -20,7 +20,7 @@ tpl = require './templates/main.jade'
 
 KEYCODE_ESCAPE = 27
 
-class panels extends Backbone.View
+class Panels extends Backbone.View
 
 	tagName: 'article'
 
@@ -201,4 +201,4 @@ class panels extends Backbone.View
 			for panel in config.get('selectedPanels').models
 				@$('.panels').append panel.get('view').el
 
-module.exports = panels
+module.exports = Panels
