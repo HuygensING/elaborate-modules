@@ -44,7 +44,7 @@ class Panels extends Backbone.View
 
 			@model.fetch().done => modelLoaded()
 
-		$(window).resize @setHeights
+		$(window).resize @setHeights.bind(@)
 
 	# ### Render
 	render: ->
