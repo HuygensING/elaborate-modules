@@ -19,7 +19,7 @@ class SearchResult extends Views.Base
 
 	className: 'results-placeholder'
 
-	initialize: ->
+	initialize: (@options={}) ->
 		super
 
 		@render()

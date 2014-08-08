@@ -20,7 +20,7 @@ class EntryListItem extends Base
 	tagName: 'li'
 
 	# ### Initialize
-	initialize: ->
+	initialize: (@options={}) ->
 		super
 
 		@options.fulltext ?= false

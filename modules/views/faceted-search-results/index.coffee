@@ -26,7 +26,7 @@ class FacetedSearchResults extends Views.Base
 	className: 'faceted-search-results'
 
 	# ### Initialize
-	initialize: ->
+	initialize: (@options) ->
 		super
 
 		@resultRows = 50
@@ -48,6 +48,7 @@ class FacetedSearchResults extends Views.Base
 
 	renderFacetedSearch: ->
 		sortParameters = []
+
 		for level in @options.levels
 			sortParameters.push fieldname: level, direction: 'asc'
 

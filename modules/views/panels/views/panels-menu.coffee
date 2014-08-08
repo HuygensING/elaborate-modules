@@ -14,7 +14,7 @@ class PanelsMenu extends Backbone.View
 	className: 'panels-menu'
 
 	# ### Initialize
-	initialize: ->
+	initialize: (@options) ->
 		@setSelectedPanels()
 
 		@render()

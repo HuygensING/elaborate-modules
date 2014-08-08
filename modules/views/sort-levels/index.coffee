@@ -18,7 +18,8 @@ class SortLevels extends Views.Base
 	className: 'sort-levels'
 
 	# ### Initialize
-	initialize: -> @render()
+	initialize: (@options={}) ->
+		@render()
 
 	# ### Render
 	render: ->

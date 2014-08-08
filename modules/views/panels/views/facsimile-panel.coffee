@@ -7,7 +7,7 @@ class FacsimilePanel extends Backbone.View
 	className: 'facsimile'
 
 	# ### Initialize
-	initialize: -> 
+	initialize: (@options) ->
 		@render()
 
 

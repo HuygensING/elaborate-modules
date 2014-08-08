@@ -14,7 +14,7 @@ class AnnotationsView extends Backbone.View
 
 	# ### Initialize
 
-	initialize: ->
+	initialize: (@options) ->
 		@expandAnnotations = false
 
 		@render()

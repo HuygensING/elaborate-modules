@@ -29,7 +29,7 @@ class AnnotatedText extends Backbone.View
 
 	className: 'elaborate-annotated-text'
 
-	initialize: -> 
+	initialize: (@options) ->
 		@options.autoListening ?= true
 		@options.annotationsVisible ?= true
 		@options.scrollEl ?= $('html body')

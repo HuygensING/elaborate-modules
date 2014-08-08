@@ -18,7 +18,7 @@ tpl = require '../templates/edit-multiple-metadata.jade'
 class EditMultipleMetadata extends Views.Base
 
   # ### Initialize
-  initialize: ->
+	initialize: (@options) ->
     super
 
     @listenTo Backbone, 'entrymetadatafields:update', (fields) =>
