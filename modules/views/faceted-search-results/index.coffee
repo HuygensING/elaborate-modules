@@ -101,11 +101,7 @@ class FacetedSearchResults extends Views.Base
 			@$('.resultview').html @subviews.searchResult.$el
 
 			@listenTo @subviews.searchResult, 'change:sort-levels', (sortParameters) =>
-				newQueryOptions =
-					sortParameters: sortParameters
-					resultFields: _.pluck(sortParameters, 'fieldname')
-
-				@subviews.facetedSearch.refresh newQueryOptions
+				@subviews.facetedSearch.sortResultsBy sortParameters
 			@listenTo @subviews.searchResult, 'change:pagination', (pagenumber) => @subviews.facetedSearch.page pagenumber
 			@listenTo @subviews.searchResult, 'navigate:entry', (id, terms, textLayer) => @trigger 'navigate:entry', id, terms, textLayer
 			@listenTo @subviews.searchResult, 'check:entryListItem', (id) => @subviews.editMultipleEntryMetadata.activateSaveButton()

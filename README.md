@@ -1,5 +1,9 @@
 ## Changelog
 
+### 1.0.6
+
+- [bug] Change call to fs.refresh to fs.sortResultsBy
+
 ### 1.0.5
 
 - [bug] Add @options argument to views initialize method for Backbone v1+
