@@ -1,5 +1,9 @@
 ## Changelog
 
+### DEV
+
+- [bug] Hide levels on save.
+
 ### 1.0.6
 
 - [bug] Change call to fs.refresh to fs.sortResultsBy

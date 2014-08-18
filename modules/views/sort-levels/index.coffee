@@ -58,6 +58,9 @@ class SortLevels extends Views.Base
 	toggleLevels: (ev) ->
 		@$('div.levels').toggle()
 
+	hideLevels: ->
+		@$('div.levels').hide()
+
 	changeLevels: (ev) ->
 		@$('div.levels').addClass 'show-save-button'
 
@@ -92,6 +95,8 @@ class SortLevels extends Views.Base
 			sortParameter.direction = if $(li).find('i.fa').hasClass 'fa-sort-alpha-asc' then 'asc' else 'desc'
 
 			sortParameters.push sortParameter
+
+		@hideLevels()
 
 		@trigger 'change', sortParameters
 
