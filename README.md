@@ -1,8 +1,9 @@
 ## Changelog
 
-### DEV
+### 1.0.7
 
 - [bug] Hide levels on save.
+- [bug] Value was not (multiple) saved when user clicked 'include' checkbox.
 
 ### 1.0.6
 
