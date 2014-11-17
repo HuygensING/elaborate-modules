@@ -13,7 +13,7 @@ class Config extends Backbone.Model
 		restUrl: 'http://demo7.huygens.knaw.nl/elab4testBE/'
 		
 		# PROD
-#		restUrl: 'https://rest.elaborate.huygens.knaw.nl/'
+		# restUrl: 'https://rest.elaborate.huygens.knaw.nl/'
 
 		basePath: basePath
 		appRootElement: '#app'

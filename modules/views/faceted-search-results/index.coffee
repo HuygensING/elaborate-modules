@@ -3,7 +3,6 @@ $ = require 'jquery'
 _ = require 'underscore'
 
 Fn = require 'hilib/src/utils/general'
-dom = require 'hilib/src/utils/dom'
 token = require 'hilib/src/managers/token'
 
 
@@ -29,7 +28,7 @@ class FacetedSearchResults extends Views.Base
 	initialize: (@options) ->
 		super
 
-		@resultRows = 50
+		@resultRows = @options.resultRows ? 50
 
 		@listenTo Backbone, 'entrymetadatafields:update', (fields) =>
 			@options.entryMetadataFields = fields
@@ -64,6 +63,7 @@ class FacetedSearchResults extends Views.Base
 				sortParameters: sortParameters
 				resultFields: @options.levels
 			resultRows: @resultRows
+			templates: @options.templates
 		@$('.faceted-search-placeholder').html @subviews.facetedSearch.el
 
 		@listenTo @subviews.facetedSearch, 'unauthorized', =>
@@ -92,7 +92,9 @@ class FacetedSearchResults extends Views.Base
 
 
 	renderResult: (responseModel) ->
-		unless @subviews.searchResult?
+		if @subviews.searchResult?
+			@subviews.searchResult.renderListItems responseModel
+		else
 			@subviews.searchResult = new Views.SearchResult
 				responseModel: responseModel
 				levels: @options.levels
@@ -105,8 +107,6 @@ class FacetedSearchResults extends Views.Base
 			@listenTo @subviews.searchResult, 'change:pagination', (pagenumber) => @subviews.facetedSearch.page pagenumber
 			@listenTo @subviews.searchResult, 'navigate:entry', (id, terms, textLayer) => @trigger 'navigate:entry', id, terms, textLayer
 			@listenTo @subviews.searchResult, 'check:entryListItem', (id) => @subviews.editMultipleEntryMetadata.activateSaveButton()
-		else
-			@subviews.searchResult.renderListItems responseModel
 
 	# ### Events
 	events:

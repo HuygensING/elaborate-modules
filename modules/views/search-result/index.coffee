@@ -46,26 +46,22 @@ class SearchResult extends Views.Base
 
 		@listenTo @subviews.sortLevels, 'change', (sortParameters) => @trigger 'change:sort-levels', sortParameters
 
-	renderPagination: ->
-		if @subviews.pagination?
-			@stopListening @subviews.pagination
-			@subviews.pagination.destroy()
+	renderListItems: (responseModel) ->
+		# On the first render, the response model is present in the @options.
+		# On re-render, the response model is given as an argument.
+		@options.responseModel = responseModel if responseModel?
 
-		@subviews.pagination = new Views.Pagination
-			start: @options.responseModel.get('start')
-			rowCount: @options.resultRows
-			resultCount: @options.responseModel.get('numFound')
-		@listenTo @subviews.pagination, 'change:pagenumber', @changePage
-		@$('header .pagination').html @subviews.pagination.el
+		# Set the number of found entries to the header.
+		@$('header h3.numfound').html "Found #{@options.responseModel.get('numFound')} #{config.get('entryTermPlural')}"
 
-	changePage: (pageNumber) ->
-		entries = @$ 'div.entries'
-		entries.find('ul.page').hide()
+		@renderPagination()
 
-		if entries.find("ul.page[data-page-number=\"#{pageNumber}\"]").length > 0
-			entries.find("ul.page[data-page-number=\"#{pageNumber}\"]").show()
-		else
-			@trigger 'change:pagination', pageNumber
+		# Remove previously rendered list items.
+		listItem.remove() for listItem in listItems
+
+		@$("div.entries ul.page").remove()
+
+		@renderListItemsPage @options.responseModel
 
 	renderListItemsPage: (responseModel) ->
 		pageNumber = @subviews.pagination.options.currentPage
@@ -91,29 +87,32 @@ class SearchResult extends Views.Base
 			# Add the list item to the frag.
 			frag.appendChild entryListItem.el
 
-
 		# Add the frag to the dom.
 		ul = $("<ul class=\"page\" data-page-number=\"#{pageNumber}\" />")
 		ul.html frag
+
 		@$("div.entries").append ul
 
+	renderPagination: ->
+		if @subviews.pagination?
+			@stopListening @subviews.pagination
+			@subviews.pagination.destroy()
 
-	renderListItems: (responseModel) ->
-		# On the first render, the response model is present in the @options.
-		# On re-render, the response model is given as an argument.
-		@options.responseModel = responseModel if responseModel?
+		@subviews.pagination = new Views.Pagination
+			start: @options.responseModel.get('start')
+			rowCount: @options.resultRows
+			resultCount: @options.responseModel.get('numFound')
+		@listenTo @subviews.pagination, 'change:pagenumber', @changePage
+		@$('header .pagination').html @subviews.pagination.el
 
-		# Set the number of found entries to the header.
-		@$('header h3.numfound').html "Found #{@options.responseModel.get('numFound')} #{config.get('entryTermPlural')}"
+	changePage: (pageNumber) ->
+		entries = @$ 'div.entries'
+		entries.find('ul.page').hide()
 
-		@renderPagination()
-
-		# Remove previously rendered list items.
-		listItem.remove() for listItem in listItems
-
-		@$("div.entries ul.page").remove()
-
-		@renderListItemsPage @options.responseModel
+		if entries.find("ul.page[data-page-number=\"#{pageNumber}\"]").length > 0
+			entries.find("ul.page[data-page-number=\"#{pageNumber}\"]").show()
+		else
+			@trigger 'change:pagination', pageNumber
 
 	# ### Events
 	events: ->
