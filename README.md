@@ -1,5 +1,9 @@
 ## Changelog
 
+### 1.0.9
+
+- Clean up
+
 ### 1.0.7
 
 - [bug] Hide levels on save.
