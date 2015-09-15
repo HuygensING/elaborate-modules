@@ -29,7 +29,6 @@ class Panels extends Backbone.View
 		super
 
 		@subviews = []
-
 		modelLoaded = =>
 			entries.setCurrent @model.id
 			@el.setAttribute 'id', 'entry-'+@model.id
@@ -51,6 +50,8 @@ class Panels extends Backbone.View
 		rtpl = tpl
 			metadata: @model.get('metadata') || []
 			entryName: @model.get('name')
+			image_copyright_statement: @options.image_copyright_statement || ""
+
 		@$el.html rtpl
 
 		# @renderMetadata()
