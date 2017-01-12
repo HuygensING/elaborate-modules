@@ -1,7 +1,7 @@
 {
   "name": "elaborate-modules",
   "description": "Modules for the eLaborate frontend shared by the eLaborate Workenvironment and eLaborate Publication.",
-  "version": "1.0.10",
+  "version": "1.0.11",
   "author": {
     "name": "Gijsjan Brouwer",
     "email": "a.g.brouwer@huygens.knaw.nl"

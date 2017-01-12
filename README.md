@@ -1,4 +1,13 @@
+## Development
+
+- Change version number in package.json
+- Add, commit, push to Github
+
 ## Changelog
+
+### 1.0.11
+
+- Add BioPort ID to person annotations
 
 ### 1.0.9
 

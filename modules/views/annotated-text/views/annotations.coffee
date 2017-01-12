@@ -27,6 +27,7 @@ class AnnotationsView extends Backbone.View
 	render: ->
 		annotationData = @options.paralleltexts[@options.textLayer]?.annotationData
 
+
 		annotations = {}
 		annotations[annotation.n] = annotation for annotation in annotationData ? []
 

@@ -12,7 +12,7 @@ Entry = require '../../models/entry'
 
 Views =
 	Base: require 'hilib/src/views/base'
-	FacetedSearch: require 'huygens-faceted-search'
+	FacetedSearch: require 'hibb-faceted-search'
 	EditMultipleMetadata: require './views/edit-multiple-metadata'
 	SearchResult: require '../search-result'
 
@@ -51,9 +51,11 @@ class FacetedSearchResults extends Views.Base
 		for level in @options.levels
 			sortParameters.push fieldname: level, direction: 'asc'
 
+		console.log(@options)
 		@subviews.facetedSearch = new Views.FacetedSearch
 			textSearch: @options.textSearch
-			searchPath: @options.searchUrl
+			baseUrl: @options.searchUrl
+			searchPath: ''
 			authorizationHeaderToken: "#{token.getType()} #{token.get()}"
 			textSearchOptions:
 				textLayers: @options.textLayers

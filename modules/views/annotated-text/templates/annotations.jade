@@ -12,4 +12,6 @@ ol
 				span= annotation.get('type').name
 			- text = annotation.get('text') === '' ? '&nbsp;' : annotation.get('text')
 			span!= text
+			if annotation.get('type').hasOwnProperty('metadata') && annotation.get('type').metadata.hasOwnProperty('person id') && annotation.get('type').metadata['person id'] !== ''
+				div.bioportid= 'BioPort ID: ' + annotation.get('type').metadata['person id']
 			hr
